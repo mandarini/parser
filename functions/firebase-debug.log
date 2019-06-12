@@ -1,0 +1,149 @@
+[debug] [2019-06-12T23:44:41.100Z] ----------------------------------------------------------------------
+[debug] [2019-06-12T23:44:41.101Z] Command:       /Users/katerinaskroumpelou/.nvm/versions/node/v10.15.3/bin/node /Users/katerinaskroumpelou/.nvm/versions/node/v10.15.3/bin/firebase deploy
+[debug] [2019-06-12T23:44:41.101Z] CLI Version:   6.6.0
+[debug] [2019-06-12T23:44:41.102Z] Platform:      darwin
+[debug] [2019-06-12T23:44:41.102Z] Node Version:  v10.15.3
+[debug] [2019-06-12T23:44:41.102Z] Time:          Thu Jun 13 2019 02:44:41 GMT+0300 (Eastern European Summer Time)
+[debug] [2019-06-12T23:44:41.102Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-06-12T23:44:41.110Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-06-12T23:44:41.110Z] > authorizing via signed-in user
+[debug] [2019-06-12T23:44:41.110Z] [iam] checking project parser-home for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2019-06-12T23:44:41.112Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/parser-home:testIamPermissions  
+
+[debug] [2019-06-12T23:44:42.222Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'parser-home'...
+[info] 
+[info] i  deploying functions
+[debug] [2019-06-12T23:44:43.292Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase serve --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "firebase-admin": "^7.0.0",
+    "firebase-functions": "^3.0.1"
+  },
+  "private": true
+}
+[info] i  functions: ensuring necessary APIs are enabled...
+[debug] [2019-06-12T23:44:43.293Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/cloudfunctions.googleapis.com/projectSettings/parser-home?view=CONSUMER_VIEW  
+ 
+[debug] [2019-06-12T23:44:43.293Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/runtimeconfig.googleapis.com/projectSettings/parser-home?view=CONSUMER_VIEW  
+ 
+[debug] [2019-06-12T23:44:44.888Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:44:45.051Z] <<< HTTP RESPONSE 200
+[info] ✔  functions: all necessary APIs are enabled
+[debug] [2019-06-12T23:44:45.052Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/parser-home  
+ 
+[debug] [2019-06-12T23:44:46.115Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:44:46.116Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/678609163689:getServerAppConfig  
+ 
+[debug] [2019-06-12T23:44:46.610Z] <<< HTTP RESPONSE 200
+[info] i  functions: preparing functions directory for uploading...
+[debug] [2019-06-12T23:44:46.612Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/parser-home/configs  
+ 
+[debug] [2019-06-12T23:44:47.971Z] <<< HTTP RESPONSE 200
+[info] i  functions: packaged functions (28.2 KB) for uploading
+[debug] [2019-06-12T23:44:48.119Z] >>> HTTP REQUEST POST https://cloudfunctions.googleapis.com/v1/projects/parser-home/locations/us-central1/functions:generateUploadUrl  
+ 
+[debug] [2019-06-12T23:44:48.695Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:44:48.696Z] >>> HTTP REQUEST PUT https://storage.googleapis.com/gcf-upload-us-central1-6e61a617-3c99-4399-888a-51b93aca38d8/1265aae3-fdb3-4a26-a9d1-f2888b8049ba.zip?GoogleAccessId=service-678609163689@gcf-admin-robot.iam.gserviceaccount.com&Expires=1560384888&Signature=luq80YKIxxSixlk7SsP78KsG6CvUAQTo2hf58qG4JGLg45difFMF%2BiNiNdTXhDwLXTnwyO1WvRJK0zigV7d3GV4XNjyKikZJoRRZSGLcuHAeEbk8CvayV0y3hhmjTYL1IQmoMMr15%2BdchZKM%2B%2BRAuysYFgX3wsN4Ry5SPpTr2zvsrmcYxx%2FPtTgd2sl6reSUcKNzEBoByFE%2Bf0NAtyOQRAQ801uKIU4ULYd4XNd6Z7HNEWG5ZIWD3aqsALMzHwPr9gRbKp6Ot2GmZpR7pSg6Ih8%2BEM%2FAVx6AAWOCg%2BPu2ei4v6%2F2b%2BtUhrG5j9iqUsE08a8bJ8IyRu7In0q3jwoWtw%3D%3D  
+
+[debug] [2019-06-12T23:44:49.571Z] <<< HTTP RESPONSE 200
+[info] ✔  functions: functions folder uploaded successfully
+[debug] [2019-06-12T23:44:49.573Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/projects/parser-home/locations/-/functions  
+ 
+[debug] [2019-06-12T23:44:50.210Z] <<< HTTP RESPONSE 200
+[info] i  functions: creating Node.js 6 function scheduledFunction(us-central1)...
+[debug] [2019-06-12T23:44:50.213Z] Trigger is:  {"eventTrigger":{"resource":"projects/parser-home/topics","eventType":"google.pubsub.topic.publish","service":"pubsub.googleapis.com"}}
+[info] i  functions: updating Node.js 6 function helloWorld(us-central1)...
+[debug] [2019-06-12T23:44:50.214Z] Trigger is:  {"httpsTrigger":{}}
+[debug] [2019-06-12T23:44:50.216Z] >>> HTTP REQUEST POST https://cloudfunctions.googleapis.com/v1/projects/parser-home/locations/us-central1/functions  
+
+[debug] [2019-06-12T23:44:50.216Z] >>> HTTP REQUEST PATCH https://cloudfunctions.googleapis.com/v1/projects/parser-home/locations/us-central1/functions/helloWorld {"updateMask":"sourceUploadUrl,name,labels,httpsTrigger"} 
+
+[debug] [2019-06-12T23:44:50.513Z] <<< HTTP RESPONSE 400
+[debug] [2019-06-12T23:44:50.513Z] <<< HTTP RESPONSE BODY
+[warn] ⚠  functions: failed to create function scheduledFunction
+[info] HTTP Error: 400, The request has errors
+[debug] [2019-06-12T23:44:50.751Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:44:50.753Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/projects/parser-home/locations/-/functions  
+ 
+[debug] [2019-06-12T23:44:51.480Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:44:51.481Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:44:51.893Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:44:53.900Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:44:54.307Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:44:56.311Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:44:56.733Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:44:58.733Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:44:59.129Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:45:01.131Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:45:01.526Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:45:03.528Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:45:03.930Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:45:05.932Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:45:06.338Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:45:08.344Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:45:08.743Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:45:10.746Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:45:11.167Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:45:13.168Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:45:13.573Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:45:15.579Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:45:15.974Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:45:17.980Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:45:18.382Z] <<< HTTP RESPONSE 200
+[debug] [2019-06-12T23:45:20.387Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/cGFyc2VyLWhvbWUvdXMtY2VudHJhbDEvaGVsbG9Xb3JsZC9RcXZ5UjZJOUV5SQ  
+ 
+[debug] [2019-06-12T23:45:20.793Z] <<< HTTP RESPONSE 200
+[warn] ⚠  functions[helloWorld(us-central1)]: Deployment error.
+[info] Function failed on loading user code. Error message: Code in file index.js can't be loaded.
+Is there a syntax error in your code?
+Detailed stack trace: /user_code/node_modules/firebase-functions/lib/providers/https.js:282
+    const func = async (req, res) => {
+                       ^
+
+SyntaxError: Unexpected token (
+    at createScript (vm.js:56:10)
+    at Object.runInThisContext (vm.js:97:10)
+    at Module._compile (module.js:549:28)
+    at Object.Module._extensions..js (module.js:586:10)
+    at Module.load (module.js:494:32)
+    at tryModuleLoad (module.js:453:12)
+    at Function.Module._load (module.js:445:3)
+    at Module.require (module.js:504:17)
+    at require (internal/module.js:20:19)
+    at Object.<anonymous> (/user_code/node_modules/firebase-functions/lib/index.js:39:15)
+[info] 
+
+Functions deploy had errors with the following functions:
+[info] 	helloWorld
+[info] 	scheduledFunction
+[info] 
+
+To try redeploying those functions, run:
+[info]     firebase deploy --only functions:helloWorld,functions:scheduledFunction
+[info] 
+
+To continue deploying other features (such as database), run:
+[info]     firebase deploy --except functions
