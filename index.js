@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const admin = require("firebase-admin");
+const crypto = require("crypto");
 
 const serviceAccount = require("./parser-home-firebase-adminsdk-v5nyr-95a69a4ea5.json");
 
@@ -26,50 +27,77 @@ if (req.status == 200) {
   $(".lazy.r").each(function(index, element) {
     homesList[index] = {};
     var title = $(element).find(".r_desc");
-    homesList[index]["title"] = $(title)
+    var date = $(element).find(".r_date");
+    var stats = $(element).find(".r_stats");
+
+    let title_string = $(title)
       .find("h2")
       .text()
       .replace(/\t/g, "")
       .replace(/\n/g, "")
       .replace(/\t/g, "");
 
-    homesList[index]["description"] = $(title)
+    let description_string = $(title)
       .find("p")
       .text()
       .replace(/\t/g, "")
       .replace(/\n/g, "")
       .replace(/\t/g, "");
 
-    var date = $(element).find(".r_date");
-    homesList[index]["date"] = $(date)
+    let date_string = $(date)
       .text()
       .replace(/\t/g, "")
       .replace(/\n/g, "")
       .replace(/\t/g, "");
 
-    var stats = $(element).find(".r_stats");
+    homesList[index]["title"] = title_string;
+    homesList[index]["description"] = description_string;
+    homesList[index]["date_string"] = date_string;
+
+    let year = date_string.split(" ");
+    homesList[index]["year"] = year[year.length - 1];
+
+    let price_string;
+    let area_string;
+    let price_per_sqm_string;
+
     $(stats)
       .find("li")
       .each(function(index2, element2) {
-        console.log(index2, $(element2).text());
+        // console.log(index2, $(element2).text());
         if (index2 == 0) {
-          homesList[index]["price"] = $(element2).text();
+          price_string = $(element2).text();
+          homesList[index]["price_string"] = price_string;
+          homesList[index]["price"] = price_string.split(" ")[0]
+            ? price_string.split(" ")[0]
+            : null;
         }
         if (index2 == 1) {
-          homesList[index]["area"] = $(element2).text();
+          area_string = $(element2).text();
+          homesList[index]["area_string"] = area_string;
+          homesList[index]["area"] = area_string.substring(
+            0,
+            area_string.length - 5
+          );
         }
         if (index2 == 2) {
-          homesList[index]["price_per_sqm"] = $(element2).text();
+          price_per_sqm_string = $(element2).text();
+          homesList[index]["price_per_sqm_string"] = price_per_sqm_string;
         }
       });
 
-    /**
-       * Unique ID
-       * 
-       *       const digest = crypto
-                        .createHmac("sha256", sorted_array.toString())
-                        .digest("hex");
-       */
+    let unique_string = title_string + date_string + price_string + area_string;
+    const digest = crypto.createHmac("sha256", unique_string).digest("hex");
+
+    db.collection("houses")
+      .doc(digest)
+      .set(homesList[index])
+      .then(res => {
+        console.log("success");
+      })
+      .catch(err => {
+        console.log("error", err);
+      });
   });
   console.log(homesList);
   let json = JSON.stringify(homesList);
