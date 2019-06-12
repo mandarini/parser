@@ -50,12 +50,23 @@ if (req.status == 200) {
       .replace(/\n/g, "")
       .replace(/\t/g, "");
 
+    let link = $(element).find("a.r_t");
+    console.log($(link).attr("href"));
+    homesList[index]["link"] = `https://www.xe.gr/${$(link).attr("href")}`;
+
     homesList[index]["title"] = title_string;
     homesList[index]["description"] = description_string;
     homesList[index]["date_string"] = date_string;
 
     let year = date_string.split(" ");
     homesList[index]["year"] = year[year.length - 1];
+
+    homesList[index]["month"] = getMonth(year[2]);
+
+    homesList[index]["dayof"] = year[1];
+
+    homesList[index]["full_date"] =
+      year[year.length - 1] + getMonth(year[2]) + year[1];
 
     let price_string;
     let area_string;
@@ -105,4 +116,35 @@ if (req.status == 200) {
   fs.writeFile("myjsonfile.json", json, "utf8", function() {
     console.log("ok");
   });
+}
+
+function getMonth(name) {
+  switch (name) {
+    case "Ιαν":
+      return "01";
+    case "Φεβ":
+      return "02";
+    case "Μαρ":
+      return "03";
+    case "Απρ":
+      return "04";
+    case "Μαΐ":
+      return "05";
+    case "Ιουν":
+      return "06";
+    case "Ιουλ":
+      return "07";
+    case "Αυγ":
+      return "08";
+    case "Σεπ":
+      return "09";
+    case "Οκτ":
+      return "10";
+    case "Νοε":
+      return "11";
+    case "Δεκ":
+      return "12";
+    default:
+      return "01";
+  }
 }
