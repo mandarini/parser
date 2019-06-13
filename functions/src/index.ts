@@ -3,12 +3,21 @@ import * as admin from "firebase-admin";
 import * as crypto from "crypto";
 import * as cheerio from "cheerio";
 import * as rp from "request-promise";
+import { DocumentSnapshot } from "firebase-functions/lib/providers/firestore";
+import { DocumentData } from "@google-cloud/firestore";
 
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
 //
+
+export const pushNotif = functions.firestore
+  .document("houses/{houseID}")
+  .onWrite((change, context) => {
+    const newValue = change.after.data();
+    console.log("written house", newValue);
+  });
 
 export const houses = functions.pubsub.topic("PriceHousing").onPublish(() => {
   main();
@@ -35,6 +44,8 @@ function main() {
         var title = $(element).find(".r_desc");
         var date = $(element).find(".r_date");
         var stats = $(element).find(".r_stats");
+
+        console.log($(title).text());
 
         let title_string = $(title)
           .find("h2")
@@ -105,40 +116,106 @@ function main() {
         const digest = crypto.createHmac("sha256", unique_string).digest("hex");
 
         homesList[index]["uuid"] = digest;
-      });
-      const batch = db.batch();
-      for (let i = 0; i < homesList.length; i++) {
-        let houseRef = db.collection("houses").doc(homesList[i]["digest"]);
-        await houseRef.get().then(doc => {
-          if (doc.exists) {
-            if (
-              doc &&
-              doc.data() &&
-              (doc.data()["price"] !== homesList[i]["price"] ||
-                doc.data()["full_date"] !== homesList[i]["full_date"])
-            ) {
-              batch.update(houseRef, homesList[i]);
+
+        db.collection("houses")
+          .doc(digest)
+          .get()
+          .then((doc: DocumentSnapshot) => {
+            if (doc.exists) {
+              console.log("doc exists");
+              doc.ref
+                .update({ katerina: "kat" })
+                .then(() => {
+                  console.log("updated", digest);
+                })
+                .catch(err => {
+                  console.log("error updating", digest, err);
+                });
+              db.collection("houses")
+                .doc("katerina")
+                .set({});
+              if (doc && doc.data()) {
+                let document: DocumentData | undefined = doc.data();
+                if (document === undefined) document = {};
+                if (
+                  document["price"] !== homesList[index]["price"] ||
+                  document["full_date"] !== homesList[index]["full_date"]
+                ) {
+                  doc.ref
+                    .update(homesList[index])
+                    .then(() => {
+                      console.log("updated", digest);
+                    })
+                    .catch(err => {
+                      console.log("error updating", digest, err);
+                    });
+                }
+              }
+            } else {
+              console.log("doc exists");
+              db.collection("houses")
+                .doc("katerina")
+                .set({});
+              db.collection("houses")
+                .doc(digest)
+                .set(homesList[index])
+                .then(() => {
+                  console.log("set", digest);
+                })
+                .catch(err => {
+                  console.log("error set", digest, err);
+                });
             }
-          } else {
-            batch.set(houseRef, homesList[i]);
-          }
-        });
-      }
-      batch
-        .commit()
-        .then(() => {
-          console.log("success writing");
-          return true;
-        })
-        .catch(err => {
-          console.log("error writing", err);
-          return null;
-        });
+          })
+          .catch(err => {
+            console.log("couldnt get doc");
+            db.collection("houses")
+              .doc(digest)
+              .set(homesList[index])
+              .then(() => {
+                console.log("set", digest);
+              })
+              .catch(err => {
+                console.log("error set", digest, err);
+              });
+          });
+      });
+      //   const batch = db.batch();
+      //   for (let i = 0; i < homesList.length; i++) {
+      //     let houseRef = db.collection("houses").doc(homesList[i]["uuid"]);
+      //     await houseRef.get().then((doc: DocumentSnapshot) => {
+      //       if (doc.exists) {
+      //         if (doc && doc.data()) {
+      //           let document: DocumentData | undefined = doc.data();
+      //           if (document === undefined) document = {};
+      //           if (
+      //             document["price"] !== homesList[i]["price"] ||
+      //             document["full_date"] !== homesList[i]["full_date"]
+      //           ) {
+      //             batch.update(houseRef, homesList[i]);
+      //           }
+      //         }
+      //       } else {
+      //         batch.set(houseRef, homesList[i]);
+      //       }
+      //     });
+      //   }
+      //   batch
+      //     .commit()
+      //     .then(() => {
+      //       console.log("success writing");
+      //       return true;
+      //     })
+      //     .catch(err => {
+      //       console.log("error writing", err);
+      //       return null;
+      //     });
     })
     .catch(err => {
       console.log("error getting page", err);
       return null;
     });
+  return true;
 }
 
 function getMonth(name: string): string {
