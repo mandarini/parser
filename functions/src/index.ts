@@ -122,18 +122,6 @@ function main() {
           .get()
           .then((doc: DocumentSnapshot) => {
             if (doc.exists) {
-              console.log("doc exists");
-              doc.ref
-                .update({ katerina: "kat" })
-                .then(() => {
-                  console.log("updated", digest);
-                })
-                .catch(err => {
-                  console.log("error updating", digest, err);
-                });
-              db.collection("houses")
-                .doc("katerina")
-                .set({});
               if (doc && doc.data()) {
                 let document: DocumentData | undefined = doc.data();
                 if (document === undefined) document = {};
@@ -152,10 +140,6 @@ function main() {
                 }
               }
             } else {
-              console.log("doc exists");
-              db.collection("houses")
-                .doc("katerina")
-                .set({});
               db.collection("houses")
                 .doc(digest)
                 .set(homesList[index])
@@ -180,36 +164,6 @@ function main() {
               });
           });
       });
-      //   const batch = db.batch();
-      //   for (let i = 0; i < homesList.length; i++) {
-      //     let houseRef = db.collection("houses").doc(homesList[i]["uuid"]);
-      //     await houseRef.get().then((doc: DocumentSnapshot) => {
-      //       if (doc.exists) {
-      //         if (doc && doc.data()) {
-      //           let document: DocumentData | undefined = doc.data();
-      //           if (document === undefined) document = {};
-      //           if (
-      //             document["price"] !== homesList[i]["price"] ||
-      //             document["full_date"] !== homesList[i]["full_date"]
-      //           ) {
-      //             batch.update(houseRef, homesList[i]);
-      //           }
-      //         }
-      //       } else {
-      //         batch.set(houseRef, homesList[i]);
-      //       }
-      //     });
-      //   }
-      //   batch
-      //     .commit()
-      //     .then(() => {
-      //       console.log("success writing");
-      //       return true;
-      //     })
-      //     .catch(err => {
-      //       console.log("error writing", err);
-      //       return null;
-      //     });
     })
     .catch(err => {
       console.log("error getting page", err);
