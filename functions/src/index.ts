@@ -1,9 +1,8 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as crypto from "crypto";
-// import { XMLHttpRequest } from "xmlhttprequest-ts";
 import * as cheerio from "cheerio";
-import * as request from "request";
+import * as rp from "request-promise";
 
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
@@ -12,128 +11,134 @@ const db = admin.firestore();
 //
 
 export const houses = functions.pubsub.topic("PriceHousing").onPublish(() => {
-  console.log("hello again");
   main();
 });
 
 function main() {
-  console.log("hello Im in main");
-  db.collection("houses")
-    .doc("katerina")
-    .set({ kat: "kat" })
-    .then(res => {
-      console.log("successfully written katerina");
-    })
-    .catch(err => {
-      console.log("error", err);
-    });
+  console.log("main started");
   let url =
     "https://www.xe.gr/property/search?Geo.area_id_new__hierarchy=82448&Item.area.from=70&System.item_type=re_residence&Transaction.price.to=600&Transaction.type_channel=117541&page=1&per_page=50";
 
-  //   let req = new XMLHttpRequest();
-  //   req.open("GET", url, false);
-  //   req.send(null);
+  const options = {
+    uri: url,
+    headers: { "User-Agent": "test" },
+    transform: (body: any) => cheerio.load(body)
+  };
 
-  request(url, (error, response, body) => {
-    console.log("error:", error); // Print the error if one occurred
-    console.log(
-      "statusCode:",
-      response && response.statusCode,
-      response.body,
-      response.statusMessage
-    ); // Print the response status code if a response was received
-    console.log("body:", body); // Print the HTML for the Google homepage.
+  let homesList: any[] = [];
+  rp(options)
+    .then(async $ => {
+      console.log("got body");
+      $(".lazy.r").text();
+      $(".lazy.r").each((index: any, element: any) => {
+        homesList[index] = {};
+        var title = $(element).find(".r_desc");
+        var date = $(element).find(".r_date");
+        var stats = $(element).find(".r_stats");
 
-    let homesList: any[] = [];
+        let title_string = $(title)
+          .find("h2")
+          .text()
+          .replace(/\t/g, "")
+          .replace(/\n/g, "")
+          .replace(/\t/g, "");
 
-    const $ = cheerio.load(body);
-    $(".lazy.r").text();
-    $(".lazy.r").each((index, element) => {
-      homesList[index] = {};
-      var title = $(element).find(".r_desc");
-      var date = $(element).find(".r_date");
-      var stats = $(element).find(".r_stats");
+        let description_string = $(title)
+          .find("p")
+          .text()
+          .replace(/\t/g, "")
+          .replace(/\n/g, "")
+          .replace(/\t/g, "");
 
-      let title_string = $(title)
-        .find("h2")
-        .text()
-        .replace(/\t/g, "")
-        .replace(/\n/g, "")
-        .replace(/\t/g, "");
+        let date_string = $(date)
+          .text()
+          .replace(/\t/g, "")
+          .replace(/\n/g, "")
+          .replace(/\t/g, "");
 
-      let description_string = $(title)
-        .find("p")
-        .text()
-        .replace(/\t/g, "")
-        .replace(/\n/g, "")
-        .replace(/\t/g, "");
+        let link = $(element).find("a.r_t");
+        homesList[index]["link"] = `https://www.xe.gr/${$(link).attr("href")}`;
 
-      let date_string = $(date)
-        .text()
-        .replace(/\t/g, "")
-        .replace(/\n/g, "")
-        .replace(/\t/g, "");
+        homesList[index]["title"] = title_string;
+        homesList[index]["description"] = description_string;
+        homesList[index]["date_string"] = date_string;
 
-      let link = $(element).find("a.r_t");
-      homesList[index]["link"] = `https://www.xe.gr/${$(link).attr("href")}`;
+        let year = date_string.split(" ");
+        homesList[index]["year"] = year[year.length - 1];
 
-      homesList[index]["title"] = title_string;
-      homesList[index]["description"] = description_string;
-      homesList[index]["date_string"] = date_string;
+        homesList[index]["month"] = getMonth(year[2]);
 
-      let year = date_string.split(" ");
-      homesList[index]["year"] = year[year.length - 1];
+        homesList[index]["dayof"] = year[1];
 
-      homesList[index]["month"] = getMonth(year[2]);
+        homesList[index]["full_date"] =
+          year[year.length - 1] + getMonth(year[2]) + year[1];
 
-      homesList[index]["dayof"] = year[1];
+        let price_string;
+        let area_string;
+        let price_per_sqm_string;
 
-      homesList[index]["full_date"] =
-        year[year.length - 1] + getMonth(year[2]) + year[1];
+        $(stats)
+          .find("li")
+          .each((index2: any, element2: any) => {
+            if (index2 == 0) {
+              price_string = $(element2).text();
+              homesList[index]["price_string"] = price_string;
+              homesList[index]["price"] = price_string.split(" ")[0]
+                ? price_string.split(" ")[0]
+                : null;
+            }
+            if (index2 == 1) {
+              area_string = $(element2).text();
+              homesList[index]["area_string"] = area_string;
+              homesList[index]["area"] = area_string.substring(
+                0,
+                area_string.length - 5
+              );
+            }
+            if (index2 == 2) {
+              price_per_sqm_string = $(element2).text();
+              homesList[index]["price_per_sqm_string"] = price_per_sqm_string;
+            }
+          });
 
-      let price_string;
-      let area_string;
-      let price_per_sqm_string;
+        let unique_string = title_string + description_string + area_string;
+        const digest = crypto.createHmac("sha256", unique_string).digest("hex");
 
-      $(stats)
-        .find("li")
-        .each((index2, element2) => {
-          if (index2 == 0) {
-            price_string = $(element2).text();
-            homesList[index]["price_string"] = price_string;
-            homesList[index]["price"] = price_string.split(" ")[0]
-              ? price_string.split(" ")[0]
-              : null;
-          }
-          if (index2 == 1) {
-            area_string = $(element2).text();
-            homesList[index]["area_string"] = area_string;
-            homesList[index]["area"] = area_string.substring(
-              0,
-              area_string.length - 5
-            );
-          }
-          if (index2 == 2) {
-            price_per_sqm_string = $(element2).text();
-            homesList[index]["price_per_sqm_string"] = price_per_sqm_string;
+        homesList[index]["uuid"] = digest;
+      });
+      const batch = db.batch();
+      for (let i = 0; i < homesList.length; i++) {
+        let houseRef = db.collection("houses").doc(homesList[i]["digest"]);
+        await houseRef.get().then(doc => {
+          if (doc.exists) {
+            if (
+              doc &&
+              doc.data() &&
+              (doc.data()["price"] !== homesList[i]["price"] ||
+                doc.data()["full_date"] !== homesList[i]["full_date"])
+            ) {
+              batch.update(houseRef, homesList[i]);
+            }
+          } else {
+            batch.set(houseRef, homesList[i]);
           }
         });
-
-      let unique_string =
-        title_string + date_string + price_string + area_string;
-      const digest = crypto.createHmac("sha256", unique_string).digest("hex");
-
-      db.collection("houses")
-        .doc(digest)
-        .set(homesList[index])
-        .then(res => {
-          console.log("successfully written house", homesList[index]["title"]);
+      }
+      batch
+        .commit()
+        .then(() => {
+          console.log("success writing");
+          return true;
         })
         .catch(err => {
-          console.log("error", err);
+          console.log("error writing", err);
+          return null;
         });
+    })
+    .catch(err => {
+      console.log("error getting page", err);
+      return null;
     });
-  });
 }
 
 function getMonth(name: string): string {
