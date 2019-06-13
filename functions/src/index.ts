@@ -1,8 +1,9 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as crypto from "crypto";
-import { XMLHttpRequest } from "xmlhttprequest-ts";
+// import { XMLHttpRequest } from "xmlhttprequest-ts";
 import * as cheerio from "cheerio";
+import * as request from "request";
 
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
@@ -11,21 +12,41 @@ const db = admin.firestore();
 //
 
 export const houses = functions.pubsub.topic("PriceHousing").onPublish(() => {
+  console.log("hello again");
   main();
 });
 
 function main() {
+  console.log("hello Im in main");
+  db.collection("houses")
+    .doc("katerina")
+    .set({ kat: "kat" })
+    .then(res => {
+      console.log("successfully written katerina");
+    })
+    .catch(err => {
+      console.log("error", err);
+    });
   let url =
     "https://www.xe.gr/property/search?Geo.area_id_new__hierarchy=82448&Item.area.from=70&System.item_type=re_residence&Transaction.price.to=600&Transaction.type_channel=117541&page=1&per_page=50";
 
-  let req = new XMLHttpRequest();
-  req.open("GET", url, false);
-  req.send(null);
+  //   let req = new XMLHttpRequest();
+  //   req.open("GET", url, false);
+  //   req.send(null);
 
-  let homesList: any[] = [];
+  request(url, (error, response, body) => {
+    console.log("error:", error); // Print the error if one occurred
+    console.log(
+      "statusCode:",
+      response && response.statusCode,
+      response.body,
+      response.statusMessage
+    ); // Print the response status code if a response was received
+    console.log("body:", body); // Print the HTML for the Google homepage.
 
-  if (req.status == 200) {
-    const $ = cheerio.load(req.responseText);
+    let homesList: any[] = [];
+
+    const $ = cheerio.load(body);
     $(".lazy.r").text();
     $(".lazy.r").each((index, element) => {
       homesList[index] = {};
@@ -106,13 +127,13 @@ function main() {
         .doc(digest)
         .set(homesList[index])
         .then(res => {
-          console.log("success");
+          console.log("successfully written house", homesList[index]["title"]);
         })
         .catch(err => {
           console.log("error", err);
         });
     });
-  }
+  });
 }
 
 function getMonth(name: string): string {
