@@ -2,11 +2,11 @@ const cheerio = require("cheerio");
 const admin = require("firebase-admin");
 const crypto = require("crypto");
 
-const serviceAccount = require("./parser-home-firebase-adminsdk-v5nyr-95a69a4ea5.json");
+const serviceAccount = require("./house-parser-firebase-adminsdk-x68i7-c27b6b4e98.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://parser-home.firebaseio.com"
+  databaseURL: "https://house-parser.firebaseio.com"
 });
 
 const db = admin.firestore();
@@ -99,7 +99,6 @@ if (req.status == 200) {
 
     let unique_string = title_string + date_string + price_string + area_string;
     const digest = crypto.createHmac("sha256", unique_string).digest("hex");
-
     db.collection("houses")
       .doc(digest)
       .set(homesList[index])
