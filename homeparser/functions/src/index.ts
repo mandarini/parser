@@ -93,13 +93,13 @@ function main() {
   let homesList: any[] = [];
   rp(options)
     .then(async $ => {
-      console.log("got body");
+      console.log("got body", $(".lazy.r").text());
       $(".lazy.r").text();
       $(".lazy.r").each((index: any, element: any) => {
         homesList[index] = {};
-        var title = $(element).find(".r_desc");
-        var date = $(element).find(".r_date");
-        var stats = $(element).find(".r_stats");
+        let title = $(element).find(".r_desc");
+        let date = $(element).find(".r_date");
+        let stats = $(element).find(".r_stats");
 
         console.log($(title).text());
 
@@ -177,6 +177,7 @@ function main() {
           .doc(digest)
           .get()
           .then((doc: DocumentSnapshot) => {
+            console.log(doc.data());
             if (doc.exists) {
               if (doc && doc.data()) {
                 let document: DocumentData | undefined = doc.data();
