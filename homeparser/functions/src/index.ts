@@ -19,6 +19,62 @@ export const pushNotif = functions.firestore
     console.log("written house", newValue);
   });
 
+// Sends a notifications to all users when a new message is posted.
+export const sendNotifications = functions.firestore
+  .document("houses/{houseID}")
+  .onWrite((change, context) => {
+    // Only send a notification when a message has been created.
+    // const newValue = change.after.data();
+
+    const payload = {
+      notification: {
+        title: `New house`,
+        body: "New house posted",
+        click_action: `https://house-parser.firebaseapp.com`
+      }
+    };
+
+    // Get the list of device tokens.
+    return db
+      .collection("fcmTokens")
+      .get()
+      .then(tokens_snapshot => {
+        /***
+         * Got all sites, now for each site,
+         * get he capacitors table
+         */
+        tokens_snapshot.forEach(token => {
+          // Send notifications to all tokens.
+          return admin
+            .messaging()
+            .sendToDevice(token.id, payload)
+            .then(response => {
+              // For each message check if there was an error.
+
+              response.results.forEach((result, index) => {
+                const error = result.error;
+                if (error) {
+                  console.error(
+                    "Failure sending notification to",
+                    token,
+                    error
+                  );
+                  // Cleanup the tokens who are not registered anymore.
+                  if (
+                    error.code === "messaging/invalid-registration-token" ||
+                    error.code === "messaging/registration-token-not-registered"
+                  ) {
+                    db.collection("fcmTokens")
+                      .doc(token.id)
+                      .delete();
+                  }
+                }
+              });
+            });
+        });
+      });
+  });
+
 export const houses = functions.pubsub.topic("PriceHousing").onPublish(() => {
   main();
 });
