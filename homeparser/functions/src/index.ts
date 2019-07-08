@@ -12,12 +12,12 @@ const db = admin.firestore();
 // // https://firebase.google.com/docs/functions/typescript
 //
 
-export const pushNotif = functions.firestore
-  .document("houses/{houseID}")
-  .onWrite((change, context) => {
-    const newValue = change.after.data();
-    console.log("written house", newValue);
-  });
+// export const pushNotif = functions.firestore
+//   .document("houses/{houseID}")
+//   .onWrite((change, context) => {
+//     const newValue = change.after.data();
+//     console.log("written house", newValue);
+//   });
 
 // Sends a notifications to all users when a new message is posted.
 export const sendNotifications = functions.firestore
@@ -82,8 +82,7 @@ export const houses = functions.pubsub.topic("PriceHousing").onPublish(() => {
 function main() {
   console.log("main started");
   let url =
-    "https://www.xe.gr/property/search?Geo.area_id_new__hierarchy=82448&Item.area.from=70&System.item_type=re_residence&Transaction.price.to=600&Transaction.type_channel=117541&page=1&per_page=50";
-
+    "https://www.xe.gr/property/search?Geo.area_id_new__hierarchy=82448&Item.area.from=65&System.item_type=re_residence&Transaction.price.to=700&Transaction.type_channel=117541&page=1&per_page=50";
   const options = {
     uri: url,
     headers: { "User-Agent": "test" },
@@ -124,7 +123,7 @@ function main() {
           .replace(/\t/g, "");
 
         let link = $(element).find("a.r_t");
-        homesList[index]["link"] = `https://www.xe.gr/${$(link).attr("href")}`;
+        homesList[index]["link"] = `https://www.xe.gr${$(link).attr("href")}`;
 
         homesList[index]["title"] = title_string;
         homesList[index]["description"] = description_string;

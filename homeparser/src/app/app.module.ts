@@ -8,9 +8,11 @@ import { AngularFireMessagingModule } from "@angular/fire/messaging";
 import { environment } from "../environments/environment";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
+import { HouseListComponent } from './house-list/house-list.component';
+import { HouseComponent } from './house-list/house/house.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, HouseListComponent, HouseComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
