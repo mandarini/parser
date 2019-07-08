@@ -9,5 +9,7 @@ export interface House {
   price_string: string;
   title: string;
   uuid: string;
+  area: string;
+  area_string: string;
   year: string;
 }

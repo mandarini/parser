@@ -1,0 +1,13 @@
+[debug] [2019-07-08T14:20:07.398Z] ----------------------------------------------------------------------
+[debug] [2019-07-08T14:20:07.399Z] Command:       /Users/katerinaskroumpelou/.nvm/versions/node/v10.15.3/bin/node /Users/katerinaskroumpelou/.nvm/versions/node/v10.15.3/bin/firebase deploy
+[debug] [2019-07-08T14:20:07.399Z] CLI Version:   7.0.2
+[debug] [2019-07-08T14:20:07.400Z] Platform:      darwin
+[debug] [2019-07-08T14:20:07.400Z] Node Version:  v10.15.3
+[debug] [2019-07-08T14:20:07.400Z] Time:          Mon Jul 08 2019 17:20:07 GMT+0300 (Eastern European Summer Time)
+[debug] [2019-07-08T14:20:07.400Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-07-08T14:20:07.406Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-07-08T14:20:07.406Z] > authorizing via signed-in user
+[debug] [2019-07-08T14:20:07.406Z] [iam] checking project house-parser for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2019-07-08T14:20:07.408Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/house-parser:testIamPermissions  
+
