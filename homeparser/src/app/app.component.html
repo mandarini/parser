@@ -1,15 +1,12 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<h1>hello</h1>
 <button (click)="requestPermission()">
-  Hey this is a chat app, you should let us send you notifications for these
-  reasons!
+  Yes, send me notifications for new houses!
 </button>
 <button (click)="deleteMyToken()">
   Delete my token plz
 </button>
-<button (click)="listen()">
+<!-- <button (click)="listen()">
   Get notified!
-</button>
+</button> -->
 <div *ngIf="afAuth.user | async as user; else showLogin">
   <h2>Hello {{ user.displayName }}!</h2>
   <button class="logout-btn" (click)="logout()">Logout</button>
